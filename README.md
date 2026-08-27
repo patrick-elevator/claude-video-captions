@@ -39,9 +39,9 @@ if not installed, it may ask you to install it first.
 if need to install, please open the terminal.
 Command + Space -> type "terminal"
 paste the following one liner:
-
+```
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-
+```
 
 ---
 
