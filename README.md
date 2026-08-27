@@ -1,19 +1,23 @@
 # Claude Code video caption skills
 
-Burn natural, native-feeling captions into a video. You give Claude the **video** (its audio
-already has the voiceover) and the **script**. That's the entire input — timing, line breaks,
-font size, and placement are all worked out for you.
+**THIS ONLY WORKS FOR CLAUDE CODE**
 
-Two skills, and Claude picks the right one from how you ask:
+Claude skill that burns in captions for you into a video, or overlays a video with existing captions.
 
-| Skill | Use when |
+All you need to give Claude is the **video** (already has the audio you want in it) and the **script/transcript**. 
+
+The timing, line breaks, font size, and placement are all worked out for you.
+
+Two skills, claude has hooks and will choose the right one for you depending on your input.
+
+| Skill | Usecase |
 |---|---|
 | **video-captions** | The video has **no captions** yet. Adds a rounded translucent plate that hugs the text. |
-| **video-captions-cover** | The video **already has captions burned into the pixels** that need hiding. Finds the band they sit in and lays an opaque band over it. |
+| **video-captions-cover** | The video **already has captions burned in** that need hiding. Finds the band they sit in and lays an black band over it. |
 
 ---
 
-## Install
+## Install (SUPER EASY GUIDE!)
 
 Paste this into Claude Code:
 
@@ -23,36 +27,33 @@ https://github.com/patrick-elevator/claude-video-captions — clone it somewhere
 run install.sh, and tell me when both skills are registered.
 ```
 
-That's it. Claude clones the repo and runs the installer, which sets up the two skills,
+All done.
+
+Claude will clone the repo and run the installer, which sets up the two skills,
 `ffmpeg`, `whisper-cpp`, a small Python env, and downloads the speech model.
 
-Prefer to do it yourself:
 
-```bash
-git clone https://github.com/patrick-elevator/claude-video-captions ~/src/claude-video-captions
-bash ~/src/claude-video-captions/install.sh
-```
+**Needs:** macOS, [Homebrew](https://brew.sh)
+if not installed, it may ask you to install it first.
 
-Then **restart Claude Code**.
+if need to install, please open the terminal.
+Command + Space -> type "terminal"
+paste the following one liner:
 
-**Needs:** macOS, [Homebrew](https://brew.sh), and a one-time **1.6 GB** model download.
-Re-running the installer is safe; it skips whatever is already done.
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
 
 ---
 
-## Use it
+## How to use
 
-Open Claude Code in any folder and ask in plain language.
+Open claude code in any folder and ask in plain english
 
 ### Video with no captions yet
 
 ```
-Add captions to ~/Downloads/ad.mp4 — the German audio is already
-in the video. Here's the script:
-
-Was ist das für ein kleines Pflaster, das viral ging, nachdem ein
-Phlebologe in einem lokalen Forum darüber schrieb? Letzten Monat war
-jede Apotheke in Lansing, Michigan, innerhalb einer Woche leergekauft.
+Add captions to ~/Downloads/ad.mp4 — the audio is already
+in the video. Here's the script: ...
 ...
 ```
 
@@ -60,10 +61,7 @@ jede Apotheke in Lansing, Michigan, innerhalb einer Woche leergekauft.
 
 ```
 This video has English captions burned in that need covering.
-~/Downloads/ad.mp4 — the German audio is already in there. Script:
-
-Was ist das für ein kleines Pflaster, das viral ging, nachdem ein
-Phlebologe in einem lokalen Forum darüber schrieb?
+~/Downloads/ad.mp4 — the audio is already in there. Script: ...
 ...
 ```
 
