@@ -1,6 +1,6 @@
 ---
 name: video-captions
-description: "Write and burn natural, native-feeling captions into a video whose audio already contains the voiceover. You supply the video + the spoken script; the skill transcribes the audio for word-level timing, aligns the script to it, breaks it into human-quality cues, and bakes them in with ffmpeg. Use for: 'add captions to this video', 'caption this ad', 'burn in subtitles', 'add German/English captions', 'subtitle this VSL/UGC/reel'. For a video that ALREADY has captions burned in that must be hidden, use video-captions-cover instead."
+description: "Write and burn natural, native-feeling captions into a video whose audio already contains the voiceover. You supply the video + the spoken script; the skill transcribes the audio for word-level timing, aligns the script to it, breaks it into human-quality cues, and bakes them in with ffmpeg. Use for: 'add captions to this video', 'caption this ad', 'burn in subtitles', 'subtitle this VSL/UGC/reel', 'add English/German/Spanish captions'. For a video that ALREADY has captions burned in that must be hidden, use video-captions-cover instead."
 ---
 
 # Video captions (clean video)
@@ -10,8 +10,8 @@ hugs the text — the standard DTC / UGC caption look.
 
 Non-negotiable: **the script text is what appears on screen.** The audio is used only for
 timing. Never re-word, translate, or "fix" the user's script — spelling, punctuation, ellipses
-and spoken fillers ("also –", "tja…", "na ja") all ship verbatim, because that is what makes
-captions read as native rather than machine-made.
+and and spoken fillers ("look –", "I mean…", "so yeah", or "also –", "tja…" in German) all ship
+verbatim, because that is what makes captions read as native rather than machine-made.
 
 ## Inputs
 
@@ -35,8 +35,8 @@ Also needs `ffmpeg` and `whisper-cli` on PATH (`brew install ffmpeg whisper-cpp`
 (user-level install) or `<repo>/.claude/skills/` if it was vendored into a project.
 Resolve it once, then reuse it.
 
-**Step 2 — write the script to a file.** Use a heredoc so quotes/dashes survive. Keep the
-user's paragraph breaks; they help the chunker. Put it in your scratchpad dir.
+**Step 2 — write the script to a file.** Use a heredoc so quotes/dashes/apostrophes survive.
+Keep the user's paragraph breaks; they help the chunker. Put it in your scratchpad dir.
 
 **Step 3 — run:**
 
@@ -44,11 +44,12 @@ user's paragraph breaks; they help the chunker. Put it in your scratchpad dir.
 ~/.cache/caption-venv/bin/python \
   "$SKILL_DIR/scripts/caption.py" \
   --video "/path/in.mp4" --script script.txt --out "/path/out.mp4" \
-  --style hug --lang de \
+  --style hug --lang en \
   --work "$SCRATCH/wk" --srt captions.srt --verify verify.png
 ```
 
-`--lang` is the audio language (`de`, `en`, `fr`, …). Default `de`.
+`--lang` is the language spoken in the audio. Defaults to **`en`**; pass `de`, `fr`, `es`,
+`it`, `nl`, `pt`, … for anything else. Infer it from the script the user pasted — don't ask.
 
 **Step 4 — check the two numbers it prints, then look at the sheet.**
 
@@ -73,7 +74,7 @@ the audio and re-transcribing that slice — the words should match the cue at t
 
 ```bash
 ffmpeg -y -v error -ss 61.06 -t 2.2 -i "$WK/audio.wav" ck.wav
-whisper-cli -m ~/.cache/whisper-models/ggml-large-v3-turbo.bin -f ck.wav -l de -np -nt
+whisper-cli -m ~/.cache/whisper-models/ggml-large-v3-turbo.bin -f ck.wav -l en -np -nt
 ```
 
 ## Knobs

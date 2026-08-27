@@ -1,6 +1,6 @@
 ---
 name: video-captions-cover
-description: "Write and burn new captions into a video that ALREADY has captions burned in, sized and positioned to completely hide the old ones. You supply the video (audio already contains the new voiceover) + the spoken script. Use for: 'the old captions are still showing', 'cover the previous captions', 'this video has Dutch/Swedish/English captions on it', 'replace the burned-in subtitles', 'add captions over the existing ones', localising a video whose original captions could not be removed. For a clean video with no captions yet, use video-captions instead."
+description: "Write and burn new captions into a video that ALREADY has captions burned in, sized and positioned to completely hide the old ones. You supply the video (audio already contains the new voiceover) + the spoken script. Use for: 'the old captions are still showing', 'cover the previous captions', 'this video has English/Dutch/Swedish captions on it', 'replace the burned-in subtitles', 'add captions over the existing ones', localising a video whose original captions could not be removed. For a clean video with no captions yet, use video-captions instead."
 ---
 
 # Video captions (covering burned-in captions)
@@ -48,13 +48,15 @@ Resolve it once, then reuse it.
 
 **Step 2 — write the script to a file** with a heredoc, keeping the user's paragraph breaks.
 
-**Step 3 — run:**
+**Step 3 — run.** `--lang` is the language spoken in the audio; it defaults to **`en`**.
+Infer it from the script the user pasted — don't ask.
+
 
 ```bash
 ~/.cache/caption-venv/bin/python \
   "$SKILL_DIR/scripts/caption.py" \
   --video "/path/in.mp4" --script script.txt --out "/path/out.mp4" \
-  --style cover --lang de \
+  --style cover --lang en \
   --work "$SCRATCH/wk" --srt captions.srt --verify verify.png
 ```
 
@@ -92,7 +94,7 @@ Spot-check 3 points across the video — cut the audio and re-transcribe that sl
 
 ```bash
 ffmpeg -y -v error -ss 83.18 -t 2.0 -i "$WK/audio.wav" ck.wav
-whisper-cli -m ~/.cache/whisper-models/ggml-large-v3-turbo.bin -f ck.wav -l de -np -nt
+whisper-cli -m ~/.cache/whisper-models/ggml-large-v3-turbo.bin -f ck.wav -l en -np -nt
 ```
 
 ## Knobs

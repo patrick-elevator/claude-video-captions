@@ -69,9 +69,11 @@ Done. Two skills are installed:
 
 Restart Claude Code, then just ask in plain language, e.g.
 
-  Add captions to ~/Downloads/ad.mp4 — the German audio is
-  already in the video. Here's the script:
+  Add captions to ~/Downloads/ad.mp4 — the voiceover is already
+  in the video. Here's the script:
   <paste script>
+
+English by default; any other language works, just say so.
 
 Claude picks the right skill. Full usage in the README.
 ────────────────────────────────────────────────────────

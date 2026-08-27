@@ -68,6 +68,18 @@ This video has captions burned in that need covering. Add new captions.
 You get back the finished `.mp4`, a matching `.srt`, and a contact sheet showing every
 caption over its own frame so you can eyeball it before it ships.
 
+### Other languages
+
+English is the default. For anything else just mention it — Claude works it out from the
+script anyway:
+
+```
+Add captions to ~/Downloads/ad-de.mp4 — the German audio is already
+in the video. Script: ...
+```
+
+Any language Whisper supports. Any aspect ratio too — sizing scales off video width.
+
 Any language Whisper supports — just say which one, or let Claude infer it from the script.
 Any aspect ratio; sizing scales off video width.
 
@@ -100,6 +112,7 @@ version of the script.
 
 ## Good to know
 
+- **Language:** English by default. Every other language works, just say which one.
 - **Output is H.264 high/4.1 + faststart**, which is what Meta and TikTok want. Default CRF 19
   is visually transparent (SSIM ≈ 0.9999 outside the caption area).
 - **Not on a Mac?** The default face is Helvetica Neue Bold. Tell Claude to pass or change.

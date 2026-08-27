@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
 Burn natural-reading captions into a video whose audio already contains the voiceover.
+Any language Whisper supports; --lang defaults to English.
 
 Two styles:
   --style hug    rounded translucent plate that hugs the text (video has no captions)
@@ -37,11 +38,19 @@ FONT_CANDIDATES = [("/System/Library/Fonts/HelveticaNeue.ttc", 1),
                    ("/System/Library/Fonts/Supplemental/Arial Bold.ttf", 0),
                    ("/Library/Fonts/Arial Bold.ttf", 0)]
 
-# German/EN function words: never end a wrapped line on one of these
-FUNC = set("""und oder aber weil dass das die der den dem des wie was wenn als in zu mit auf
+# Words a wrapped line must not END on (articles, prepositions, conjunctions, auxiliaries).
+# English first, German second — the union is harmless for either language.
+FUNC = set("""
+the a an and or but so if as of to in on at by for from with without into onto over under
+about after before between during through than that this these those which who whom whose
+is are was were be been being am do does did done has have had having will would can could
+shall should may might must it its his her their our your my me him them us you we they he
+she not no just only still even more most much many any some every all
+almost very quite really also then when while because though although since both
+each either neither what where why how
+und oder aber weil dass das die der den dem des wie was wenn als in zu mit auf
 für von nach bei ohne sondern sich es ist war wird sind hat habe haben nicht noch nur schon
-vor über unter am im ein eine einen einem eines ihr ihre ihnen sie er so also tja na
-the a an and or but of to in on for with at from is are was were it its this that
+vor über unter am im ein eine einen einem eines ihr ihre ihnen sie er tja na
 """.split())
 
 # ---------------------------------------------------------------- probe / audio
@@ -84,14 +93,30 @@ def transcribe(wav, lang, stem):
 
 # ---------------------------------------------------------------- alignment
 
-NUMWORDS = {"2026": "zweitausendsechsundzwanzig", "12": "zwölf", "30": "dreißig",
-            "2025": "zweitausendfünfundzwanzig", "24": "vierundzwanzig",
-            "48": "achtundvierzig", "100": "hundert"}
+# Spelled-out numbers -> digits, so "12" in the script still matches a spoken "twelve"
+# (or "zwoelf"). Both sides of the alignment run through this, so either form canonicalises.
+NUM_WORDS = {}
+for _seq in (
+    "zero one two three four five six seven eight nine ten eleven twelve thirteen fourteen "
+    "fifteen sixteen seventeen eighteen nineteen twenty".split(),
+    "null eins zwei drei vier fünf sechs sieben acht neun zehn elf zwölf dreizehn vierzehn "
+    "fünfzehn sechzehn siebzehn achtzehn neunzehn zwanzig".split(),
+):
+    for _i, _w in enumerate(_seq):
+        NUM_WORDS[_w] = str(_i)
+NUM_WORDS.update({
+    "thirty": "30", "forty": "40", "fifty": "50", "sixty": "60", "seventy": "70",
+    "eighty": "80", "ninety": "90", "hundred": "100", "thousand": "1000",
+    "dreißig": "30", "vierzig": "40", "fünfzig": "50", "sechzig": "60", "siebzig": "70",
+    "achtzig": "80", "neunzig": "90", "hundert": "100", "tausend": "1000",
+    "zweitausendsechsundzwanzig": "2026", "zweitausendfünfundzwanzig": "2025",
+    "vierundzwanzig": "24", "achtundvierzig": "48",
+})
 
 def norm(s):
     s = s.lower().replace("’", "'").replace("‘", "'")
     s = re.sub(r"[^0-9a-zäöüßàâçéèêëîïôùûœ]", "", s)
-    return NUMWORDS.get(s, s)
+    return NUM_WORDS.get(s, s)
 
 def align(script_text, words):
     toks = [t for t in re.split(r"\s+", script_text.strip()) if t]
@@ -211,7 +236,10 @@ def chunk(W, st, target_frac=0.886):
                 if cps > 21:
                     c += (cps - 21) * 16         # reading-speed ceiling
                 if b < n:
-                    c += -45 if re.search(r"[,;:–…]$", W[idxs[-1]][0]) else 55
+                    prev = W[idxs[-1]][0]
+                    c += -45 if re.search(r"[,;:–…]$", prev) else 55
+                    if prev.lower().strip('„"«.,;:–…!?') in FUNC:
+                        c += 260          # never leave a cue hanging on "a" / "the" / "and"
                     if W[S[b]][1] - W[idxs[-1]][2] > 0.28:
                         c -= 35
                 if cost[a] + c < cost[b]:
@@ -422,7 +450,8 @@ def main():
     ap.add_argument("--script", required=True, help="text file with the spoken script")
     ap.add_argument("--out", required=True)
     ap.add_argument("--style", choices=["hug", "cover"], default="hug")
-    ap.add_argument("--lang", default="de")
+    ap.add_argument("--lang", default="en",
+                    help="language of the audio: en, de, fr, es, it, nl, pt, ... (default en)")
     ap.add_argument("--crf", type=int, default=19)
     ap.add_argument("--work", default=None)
     ap.add_argument("--srt", default=None)
