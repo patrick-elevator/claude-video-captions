@@ -82,8 +82,7 @@ align   368 script tokens, 99.5% exact word match
 ```
 
 Should be **above 95%**. If it's low, the script doesn't match the audio in that file — wrong
-cut, wrong version, or the audio was never swapped to the new language. Fix that first;
-captions built on a bad match drift out of sync.
+cut, wrong version. Captions built on a bad match drift out of sync.
 
 **2. The contact sheet.** Skim it. With `video-captions-cover` you're specifically looking for
 any old-language text peeking out around the edges of the band.
